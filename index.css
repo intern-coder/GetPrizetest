@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #ec1337;
+  --bg-light: #f8f6f6;
+  --bg-dark: #1a0b0d;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  font-family: 'Noto Sans SC', sans-serif;
+  background-color: var(--bg-light);
+  color: #1a0b0d;
+}
+
+.glass-effect {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.ios-safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.ios-safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-2;
+  }
+}
