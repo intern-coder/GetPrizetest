@@ -179,12 +179,6 @@ const WheelGame: React.FC<Props> = ({ onWin, onNext, onNavigate, currentStep, la
               {t.game_claim}
               <span className="material-icons">arrow_forward</span>
             </button>
-            <button
-              onClick={() => setShowPopup(false)}
-              className="mt-4 text-slate-400 text-xs font-medium tracking-widest hover:text-slate-600 transition-colors"
-            >
-              {language === 'zh' ? '不，谢谢' : 'No thanks'}
-            </button>
           </div>
         </div>
       )}
