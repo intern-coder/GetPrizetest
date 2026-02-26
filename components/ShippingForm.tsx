@@ -12,14 +12,30 @@ const ShippingForm: React.FC<Props> = ({ onBack, onSubmit, language }) => {
   const t = translations[language];
   const [formData, setFormData] = useState({
     name: '',
+    initials: '',
     phone: '',
     province: '',
     city: '',
     address: '',
+    address2: '',
     zipCode: '',
+    location: '',
   });
 
-  const isFormValid = formData.name && formData.phone && formData.address;
+  const isFormValid =
+    formData.name &&
+    formData.initials &&
+    formData.phone &&
+    formData.province &&
+    formData.city &&
+    formData.address &&
+    formData.zipCode &&
+    formData.location;
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, '');
+    setFormData({ ...formData, phone: val });
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-bg-light">
@@ -45,38 +61,67 @@ const ShippingForm: React.FC<Props> = ({ onBack, onSubmit, language }) => {
       <main className="flex-grow px-6 pb-32">
         <div className="mt-4 mb-8 text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
-            <span className="material-icons text-primary text-3xl">celebration</span>
+            <span className="material-icons text-primary text-3xl">local_shipping</span>
           </div>
           <h1 className="text-3xl font-black mb-2">{t.ship_title}</h1>
           <p className="text-slate-500 font-medium">{t.ship_subtitle}</p>
         </div>
 
-        <form className="space-y-6">
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_name}</label>
-            <input
-              type="text"
-              placeholder={t.ship_name}
-              className="w-full bg-white border border-slate-100 h-12 px-4 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
+        <form className="space-y-5">
+          <div className="grid grid-cols-4 gap-4">
+            <div className="col-span-1 space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_initials}</label>
+              <input
+                type="text"
+                placeholder="Ex. JS"
+                className="w-full bg-white border border-slate-100 h-12 px-3 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-bold text-center uppercase"
+                value={formData.initials}
+                onChange={(e) => setFormData({ ...formData, initials: e.target.value.toUpperCase().slice(0, 3) })}
+              />
+            </div>
+            <div className="col-span-3 space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_name}</label>
+              <input
+                type="text"
+                placeholder={t.ship_name}
+                className="w-full bg-white border border-slate-100 h-12 px-4 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              />
+            </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_phone}</label>
+            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_phone}</label>
+            <div className="relative">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5 pointer-events-none border-r border-slate-100 pr-3">
+                <img src="https://flagcdn.com/w20/us.png" className="w-4 h-3 rounded-sm opacity-80" alt="US" />
+                <span className="text-sm font-bold text-slate-700">+1</span>
+              </div>
+              <input
+                type="tel"
+                placeholder="000-000-0000"
+                className="w-full bg-white border border-slate-100 h-12 pl-16 pr-4 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium tracking-wider"
+                value={formData.phone}
+                onChange={handlePhoneChange}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_location}</label>
             <input
-              type="tel"
-              placeholder={t.ship_phone}
+              type="text"
+              placeholder="Ex. Northeast US / California"
               className="w-full bg-white border border-slate-100 h-12 px-4 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              value={formData.location}
+              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_province}</label>
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_province}</label>
               <input
                 type="text"
                 placeholder={t.ship_province}
@@ -86,7 +131,7 @@ const ShippingForm: React.FC<Props> = ({ onBack, onSubmit, language }) => {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_city}</label>
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_city}</label>
               <input
                 type="text"
                 placeholder={t.ship_city}
@@ -98,34 +143,46 @@ const ShippingForm: React.FC<Props> = ({ onBack, onSubmit, language }) => {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_address}</label>
-            <textarea
+            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_address}</label>
+            <input
+              type="text"
               placeholder={t.ship_address}
-              className="w-full bg-white border border-slate-100 p-4 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium resize-none"
-              rows={2}
+              className="w-full bg-white border border-slate-100 h-12 px-4 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
             />
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_zip}</label>
-            <input
-              type="text"
-              placeholder={t.ship_zip}
-              className="w-full bg-white border border-slate-100 h-12 px-4 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
-              value={formData.zipCode}
-              onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
-            />
+          <div className="grid grid-cols-3 gap-4">
+            <div className="col-span-2 space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_address2}</label>
+              <input
+                type="text"
+                placeholder={t.ship_address2}
+                className="w-full bg-white border border-slate-100 h-12 px-4 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                value={formData.address2}
+                onChange={(e) => setFormData({ ...formData, address2: e.target.value })}
+              />
+            </div>
+            <div className="col-span-1 space-y-1.5">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">{t.ship_zip}</label>
+              <input
+                type="text"
+                placeholder={t.ship_zip}
+                className="w-full bg-white border border-slate-100 h-12 px-4 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                value={formData.zipCode}
+                onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
+              />
+            </div>
           </div>
         </form>
       </main>
 
       <footer className="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white/90 backdrop-blur-xl border-t border-slate-100 px-6 pt-4 pb-8 flex flex-col gap-3">
         <button
-          onClick={() => onSubmit(formData)}
+          onClick={() => onSubmit({ ...formData, phone: `+1${formData.phone}` })}
           disabled={!isFormValid}
-          className={`w-full bg-primary hover:bg-accent-red text-white py-4 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center transition-transform active:scale-[0.98] mt-4 ${!isFormValid ? 'opacity-50 grayscale' : ''}`}
+          className={`w-full bg-primary hover:bg-accent-red text-white py-4 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center transition-transform active:scale-[0.98] mt-2 ${!isFormValid ? 'opacity-50 grayscale' : ''}`}
         >
           {t.ship_save}
         </button>

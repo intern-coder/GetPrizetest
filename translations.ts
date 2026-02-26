@@ -48,11 +48,14 @@ export const translations = {
         ship_subtitle: '请填写准确的联系方式及地址，我们将为您寄送礼券',
         ship_name: '收货人姓名',
         ship_phone: '联系电话',
-        ship_province: '所在州/省',
+        ship_province: '州/省',
         ship_city: '城市',
         ship_address: '详细地址',
+        ship_address2: '公寓/套房 (选填)',
         ship_zip: '邮政编码',
-        ship_save: '保存并领取',
+        ship_initials: '姓名简写',
+        ship_location: '大致位置',
+        ship_save: '保存并领取礼券',
 
         // 成功页
         success_title: '领取成功！',
@@ -146,7 +149,10 @@ export const translations = {
         ship_province: 'State/Province',
         ship_city: 'City',
         ship_address: 'Street Address',
+        ship_address2: 'Apt/Suite (Optional)',
         ship_zip: 'Zip Code',
+        ship_initials: 'Initials',
+        ship_location: 'Location',
         ship_save: 'Save & Claim',
 
         // Success

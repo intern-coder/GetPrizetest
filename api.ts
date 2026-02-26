@@ -131,9 +131,12 @@ export const saveShippingInfo = async (info: UserState['shippingInfo'], prizeNam
         .insert({
             order_no: orderNo,
             name: phone,       // 使用关联标识
+            initials: info.initials,
+            location: info.location,
             full_name: info.name,
             phone: info.phone, // 收件人电话
             address1: info.address,
+            address2: info.address2,
             city: info.city,
             state: info.province,
             zip: info.zipCode,

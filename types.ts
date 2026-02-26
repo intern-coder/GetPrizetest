@@ -18,10 +18,13 @@ export interface UserState {
   feedback: string;
   shippingInfo?: {
     name: string;
+    initials: string;
     phone: string;
     province: string;
     city: string;
     address: string;
+    address2?: string;
     zipCode: string;
+    location: string;
   };
 }
