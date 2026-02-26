@@ -2,51 +2,57 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Step, UserState } from './types';
 import LandingPage from './components/LandingPage';
+import LoginPage from './components/LoginPage';
 import WheelGame from './components/WheelGame';
 import FeedbackForm from './components/FeedbackForm';
 import ShippingForm from './components/ShippingForm';
 import SuccessPage from './components/SuccessPage';
 import OrdersPage from './components/OrdersPage';
 import ProfilePage from './components/ProfilePage';
-import { getOrCreateUser, recordWin, submitFeedback, saveShippingInfo, fetchUserProfile } from './api';
+import SettingsPage from './components/SettingsPage';
+import { getCurrentUserPhone, recordWin, submitFeedback, saveShippingInfo, fetchUserProfile } from './api';
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState<Step>(Step.LANDING);
+  const [language, setLanguage] = useState<'zh' | 'en'>('zh');
   const [userState, setUserState] = useState<UserState>({
     hasSpun: false,
     rating: 0,
     feedback: '',
   });
 
-  useEffect(() => {
-    // Initialize user session on mount
-    const initApp = async () => {
-      try {
-        await getOrCreateUser();
-        const profile = await fetchUserProfile();
-        if (profile) {
-          setUserState(prev => ({
-            ...prev,
-            hasSpun: profile.hasSpun,
-            prize: profile.prize || undefined,
-            shippingInfo: profile.shippingInfo || undefined,
-          }));
-        }
-      } catch (error) {
-        console.error('Initialization error:', error);
-      } finally {
-        setLoading(false);
+  const loadUserProfile = useCallback(async () => {
+    try {
+      const profile = await fetchUserProfile();
+      if (profile) {
+        setUserState(prev => ({
+          ...prev,
+          hasSpun: profile.hasSpun,
+          prize: profile.prize || undefined,
+          shippingInfo: profile.shippingInfo || undefined,
+        }));
       }
-    };
-
-    initApp();
+    } catch (error) {
+      console.error('Initialization error:', error);
+    }
   }, []);
+
+  useEffect(() => {
+    const initApp = async () => {
+      await loadUserProfile();
+      setLoading(false);
+    };
+    initApp();
+  }, [loadUserProfile]);
 
   const nextStep = useCallback(() => {
     setCurrentStep((prev) => {
       switch (prev) {
-        case Step.LANDING: return Step.GAME;
+        case Step.LANDING:
+          if (!getCurrentUserPhone()) return Step.LOGIN;
+          return Step.GAME;
+        case Step.LOGIN: return Step.GAME;
         case Step.GAME: return Step.FEEDBACK;
         case Step.FEEDBACK: return Step.SHIPPING;
         case Step.SHIPPING: return Step.SUCCESS;
@@ -58,11 +64,13 @@ const App: React.FC = () => {
   const goBack = useCallback(() => {
     setCurrentStep((prev) => {
       switch (prev) {
+        case Step.LOGIN: return Step.LANDING;
         case Step.GAME: return Step.LANDING;
         case Step.FEEDBACK: return Step.GAME;
         case Step.SHIPPING: return Step.FEEDBACK;
         case Step.ORDERS: return Step.GAME;
         case Step.PROFILE: return Step.GAME;
+        case Step.SETTINGS: return Step.PROFILE;
         default: return prev;
       }
     });
@@ -75,7 +83,18 @@ const App: React.FC = () => {
   const renderStep = () => {
     switch (currentStep) {
       case Step.LANDING:
-        return <LandingPage onStart={nextStep} />;
+        return <LandingPage onStart={nextStep} language={language} />;
+      case Step.LOGIN:
+        return (
+          <LoginPage
+            onSuccess={async () => {
+              await loadUserProfile();
+              nextStep();
+            }}
+            onBack={goBack}
+            language={language}
+          />
+        );
       case Step.GAME:
         return (
           <WheelGame
@@ -91,6 +110,7 @@ const App: React.FC = () => {
             onNext={nextStep}
             onNavigate={navigateTo}
             currentStep={currentStep}
+            language={language}
           />
         );
       case Step.FEEDBACK:
@@ -108,6 +128,7 @@ const App: React.FC = () => {
                 nextStep();
               }
             }}
+            language={language}
           />
         );
       case Step.SHIPPING:
@@ -125,12 +146,14 @@ const App: React.FC = () => {
                 nextStep();
               }
             }}
+            language={language}
           />
         );
       case Step.SUCCESS:
         return <SuccessPage
           onReset={() => setCurrentStep(Step.LANDING)}
           onViewOrders={() => setCurrentStep(Step.ORDERS)}
+          language={language}
         />;
       case Step.ORDERS:
         return (
@@ -138,6 +161,7 @@ const App: React.FC = () => {
             userState={userState}
             onBack={goBack}
             onNavigate={navigateTo}
+            language={language}
           />
         );
       case Step.PROFILE:
@@ -146,10 +170,19 @@ const App: React.FC = () => {
             userState={userState}
             onBack={goBack}
             onNavigate={navigateTo}
+            language={language}
+          />
+        );
+      case Step.SETTINGS:
+        return (
+          <SettingsPage
+            language={language}
+            setLanguage={setLanguage}
+            onBack={goBack}
           />
         );
       default:
-        return <LandingPage onStart={nextStep} />;
+        return <LandingPage onStart={nextStep} language={language} />;
     }
   };
 

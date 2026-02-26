@@ -1,12 +1,14 @@
 
 export enum Step {
   LANDING = 'LANDING',
+  LOGIN = 'LOGIN',
   GAME = 'GAME',
   FEEDBACK = 'FEEDBACK',
   SHIPPING = 'SHIPPING',
   SUCCESS = 'SUCCESS',
   ORDERS = 'ORDERS',
   PROFILE = 'PROFILE',
+  SETTINGS = 'SETTINGS',
 }
 
 export interface UserState {

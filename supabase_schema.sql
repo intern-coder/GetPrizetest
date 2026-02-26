@@ -1,80 +1,132 @@
 -- Enable UUID extension
 create extension if not exists "uuid-ossp";
 
--- Users table (custom table to track guests via local storage ID)
-create table public.users (
-  id uuid primary key default uuid_generate_v4(),
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  browser_fingerprint text, -- Optional, for basic fraud prevention
-  last_seen_at timestamp with time zone default timezone('utc'::text, now())
+-- Drop old tables if they exist to clean up
+DROP TABLE IF EXISTS shipping_info;
+DROP TABLE IF EXISTS feedback;
+DROP TABLE IF EXISTS game_results;
+DROP TABLE IF EXISTS prizes;
+DROP TABLE IF EXISTS users;
+
+-- 1. 创建统计数据表 (stats)
+CREATE TABLE IF NOT EXISTS stats (
+    id SERIAL PRIMARY KEY,
+    label TEXT NOT NULL,
+    value TEXT NOT NULL,
+    change TEXT,
+    trend TEXT CHECK (trend IN ('up', 'down')),
+    icon TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Prizes table
-create table public.prizes (
-  id uuid primary key default uuid_generate_v4(),
-  name text not null,
-  probability float not null, -- Stores probability weight
-  is_active boolean default true
+-- 2. 创建订单表 (orders)
+-- 此表结构与后台管理系统完全一致
+-- 逻辑：使用 name 字段存储注册手机号作为主关联键，同时增加 order_no 唯一订单号
+CREATE TABLE IF NOT EXISTS orders (
+    id SERIAL PRIMARY KEY,
+    order_no TEXT UNIQUE, -- 订单编号
+    initials TEXT,
+    name TEXT NOT NULL,
+    location TEXT,
+    prize TEXT NOT NULL,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'reviewing', 'completed')),
+    full_name TEXT,
+    address1 TEXT,
+    address2 TEXT,
+    city TEXT,
+    state TEXT,
+    zip TEXT,
+    phone TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Insert default prizes from WheelGame.tsx
-insert into public.prizes (name, probability) values
-  ('50% OFF', 0.1),
-  ('FREE COFFEE', 0.1),
-  ('10% OFF', 0.2),
-  ('FREE SHIPPING', 0.2),
-  ('20% OFF', 0.2),
-  ('MYSTERY GIFT', 0.2);
-
--- Game Results
-create table public.game_results (
-  id uuid primary key default uuid_generate_v4(),
-  user_id uuid references public.users(id) not null,
-  prize_id uuid references public.prizes(id), -- Nullable if they didn't win or if prize logic changes
-  prize_name text not null, -- Store name historically in case prizes change
-  won_at timestamp with time zone default timezone('utc'::text, now()) not null
+-- 3. 创建反馈表 (feedbacks)
+CREATE TABLE IF NOT EXISTS feedbacks (
+    id SERIAL PRIMARY KEY,
+    "user" TEXT NOT NULL,
+    rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    phone TEXT,
+    date TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Feedback
-create table public.feedback (
-  id uuid primary key default uuid_generate_v4(),
-  user_id uuid references public.users(id) not null,
-  rating integer not null check (rating >= 0 and rating <= 5),
-  comment text,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+-- 4. 创建产品/奖品进度表 (products)
+CREATE TABLE IF NOT EXISTS products (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    rewarded INTEGER DEFAULT 0,
+    progress INTEGER DEFAULT 0,
+    icon TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Shipping Info
-create table public.shipping_info (
-  id uuid primary key default uuid_generate_v4(),
-  user_id uuid references public.users(id) not null,
-  name text not null,
-  phone text not null,
-  province text not null,
-  city text not null,
-  address text not null,
-  zip_code text not null,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+-- 5. 创建设置表 (settings)
+CREATE TABLE IF NOT EXISTS settings (
+    id SERIAL PRIMARY KEY,
+    key TEXT UNIQUE NOT NULL,
+    value TEXT,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- RLS Policies (Row Level Security)
--- For simplicity in this demo, we'll allow public inserts but restrict reads.
--- In a real app, we'd enable RLS and use Supabase Auth or proper session handling.
+-- 6. 创建用户登录表 (app_users)
+-- 专门用于前端 App 的手机号注册与登录
+CREATE TABLE IF NOT EXISTS app_users (
+    id SERIAL PRIMARY KEY,
+    phone TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 
-alter table public.users enable row level security;
-create policy "Allow public insert users" on public.users for insert with check (true);
-create policy "Allow reading own user" on public.users for select using (true); -- Ideally restrict to own ID
+-- ---------------------------------------------------------
+-- 填充初始测试数据 (幂等插入)
+-- ---------------------------------------------------------
 
-alter table public.prizes enable row level security;
-create policy "Allow public read prizes" on public.prizes for select using (true);
+INSERT INTO stats (label, value, change, trend, icon) 
+VALUES 
+('累计参与人数', '12,540', '+12.5%', 'up', 'group'),
+('中奖率', '8.5%', '+0.5%', 'up', 'celebration'),
+('待发货订单', '1', '0%', 'up', 'pending_actions')
+ON CONFLICT DO NOTHING;
 
-alter table public.game_results enable row level security;
-create policy "Allow public insert game_results" on public.game_results for insert with check (true);
-create policy "Allow reading own results" on public.game_results for select using (true);
+INSERT INTO products (name, rewarded, progress, icon) 
+VALUES 
+('Raw Beet Powder', 540, 75, 'eco'),
+('Concentrated Juice', 210, 45, 'water_drop'),
+('Energy Capsules', 1200, 92, 'pill'),
+('VIP Gift Box', 45, 15, 'card_giftcard')
+ON CONFLICT DO NOTHING;
 
-alter table public.feedback enable row level security;
-create policy "Allow public insert feedback" on public.feedback for insert with check (true);
+INSERT INTO settings (key, value) 
+VALUES 
+('site_name', '管理系统'),
+('admin_email', 'admin@beetroot.com'),
+('maintenance_mode', 'false')
+ON CONFLICT (key) DO NOTHING;
 
-alter table public.shipping_info enable row level security;
-create policy "Allow public insert shipping_info" on public.shipping_info for insert with check (true);
-create policy "Allow reading own shipping" on public.shipping_info for select using (true);
+-- 开启 Row Level Security (RLS) 并配置公共访问权限
+ALTER TABLE stats ENABLE ROW LEVEL SECURITY;
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE feedbacks ENABLE ROW LEVEL SECURITY;
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE app_users ENABLE ROW LEVEL SECURITY;
+
+-- 策略幂等处理
+DROP POLICY IF EXISTS "Allow public access for all" ON stats;
+CREATE POLICY "Allow public access for all" ON stats FOR ALL USING (true);
+
+DROP POLICY IF EXISTS "Allow public access for all" ON orders;
+CREATE POLICY "Allow public access for all" ON orders FOR ALL USING (true);
+
+DROP POLICY IF EXISTS "Allow public access for all" ON feedbacks;
+CREATE POLICY "Allow public access for all" ON feedbacks FOR ALL USING (true);
+
+DROP POLICY IF EXISTS "Allow public access for all" ON products;
+CREATE POLICY "Allow public access for all" ON products FOR ALL USING (true);
+
+DROP POLICY IF EXISTS "Allow public access for all" ON settings;
+CREATE POLICY "Allow public access for all" ON settings FOR ALL USING (true);
+
+DROP POLICY IF EXISTS "Allow public access for all" ON app_users;
+CREATE POLICY "Allow public access for all" ON app_users FOR ALL USING (true);
