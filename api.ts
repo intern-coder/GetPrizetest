@@ -69,29 +69,11 @@ export const register = async (phone: string, password: string) => {
     return data;
 };
 
-// 记录中奖信息
+// 记录中奖信息 (改为仅本地记录，不再立即创建订单)
 export const recordWin = async (prizeName: string) => {
-    if (!supabase) return;
-    const phone = getCurrentUserPhone();
-    if (!phone) throw new Error('请先登录');
-
-    // 生成唯一的订单编号：RTD + 时间戳后 6 位 + 3 位随机数
-    const orderNo = `RTD-${Date.now().toString().slice(-6)}${Math.floor(100 + Math.random() * 900)}`;
-
-    const { error } = await supabase
-        .from('orders')
-        .insert({
-            order_no: orderNo, // 保存唯一订单编号
-            name: phone,       // 根据用户建议，使用 name 字段作为关联标识
-            phone: phone,      // 初始收货电话
-            prize: prizeName,
-            status: 'pending'
-        });
-
-    if (error) {
-        console.error('记录中奖失败:', error);
-        throw error;
-    }
+    // 根据用户要求，半路退出不计入订单，因此这里不再执行数据库插入
+    console.log('Prize won but not saved to DB yet:', prizeName);
+    return;
 };
 
 // 获取用户所有订单列表
@@ -135,40 +117,32 @@ export const submitFeedback = async (rating: number, comment: string) => {
     }
 };
 
-// 保存收件地址信息
-export const saveShippingInfo = async (info: UserState['shippingInfo']) => {
-    if (!info || !supabase) return;
+// 保存收件地址信息并正式创建订单
+export const saveShippingInfo = async (info: UserState['shippingInfo'], prizeName: string) => {
+    if (!info || !supabase || !prizeName) return;
     const phone = getCurrentUserPhone();
     if (!phone) throw new Error('请先登录');
 
-    // 使用 name 字段查找最近订单
-    const { data: latestOrder, error: fetchError } = await supabase
-        .from('orders')
-        .select('id')
-        .eq('name', phone)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-    if (fetchError || !latestOrder) {
-        throw new Error('未找到您的中奖记录');
-    }
+    // 只有在此处完成时，才正式生成并插入订单
+    const orderNo = `RTD-${Date.now().toString().slice(-6)}${Math.floor(100 + Math.random() * 900)}`;
 
     const { error } = await supabase
         .from('orders')
-        .update({
+        .insert({
+            order_no: orderNo,
+            name: phone,       // 使用关联标识
             full_name: info.name,
-            phone: info.phone, // 这里的 phone 是收件人电话
+            phone: info.phone, // 收件人电话
             address1: info.address,
             city: info.city,
             state: info.province,
             zip: info.zipCode,
+            prize: prizeName,
             status: 'reviewing'
-        })
-        .eq('id', latestOrder.id);
+        });
 
     if (error) {
-        console.error('更新地址失败:', error);
+        console.error('创建订单失败:', error);
         throw error;
     }
 };

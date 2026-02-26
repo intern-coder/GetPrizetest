@@ -15,7 +15,7 @@ import { getCurrentUserPhone, recordWin, submitFeedback, saveShippingInfo, fetch
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState<Step>(Step.LANDING);
-  const [language, setLanguage] = useState<'zh' | 'en'>('zh');
+  const [language, setLanguage] = useState<'zh' | 'en'>('en');
   const [userState, setUserState] = useState<UserState>({
     hasSpun: false,
     rating: 0,
@@ -137,7 +137,8 @@ const App: React.FC = () => {
             onBack={goBack}
             onSubmit={async (info) => {
               try {
-                await saveShippingInfo(info);
+                // 现在物流提交时才正式创建订单包，包含之前的奖品
+                await saveShippingInfo(info, userState.prize || '');
                 setUserState(prev => ({ ...prev, shippingInfo: info }));
                 nextStep();
               } catch (e) {
