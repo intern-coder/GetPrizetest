@@ -35,4 +35,18 @@ export interface Order {
   prize: string;
   order_no: string;
   created_at: string;
+  status: string;
+  rejectreason?: string;      // Support both for compatibility
+  rejection_reason?: string;  // Explicitly requested
+  carrier?: string;           // Explicitly requested for courier
+  tracking_no?: string;
+  tracking_courier?: string;  // Keep for compatibility
+  ship_date?: string;         // Explicitly requested
+  full_name?: string;
+  address1?: string;
+  address2?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  phone?: string;
 }
