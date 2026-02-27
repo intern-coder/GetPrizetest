@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Step, UserState } from './types';
 import LandingPage from './components/LandingPage';
@@ -31,6 +30,8 @@ const App: React.FC = () => {
           hasSpun: profile.hasSpun,
           prize: profile.prize || undefined,
           shippingInfo: profile.shippingInfo || undefined,
+          rating: profile.rating || 0,
+          feedback: profile.feedback || '',
         }));
       }
     } catch (error) {
@@ -137,7 +138,6 @@ const App: React.FC = () => {
             onBack={goBack}
             onSubmit={async (info) => {
               try {
-                // 现在物流提交时才正式创建订单包，包含之前的奖品
                 await saveShippingInfo(info, userState.prize || '');
                 setUserState(prev => ({ ...prev, shippingInfo: info }));
                 nextStep();

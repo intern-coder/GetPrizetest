@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { login, register } from '../api';
 import { translations } from '../translations';
@@ -22,7 +21,6 @@ const LoginPage: React.FC<Props> = ({ onSuccess, onBack, language }) => {
         e.preventDefault();
         setError('');
 
-        // 基础校验
         if (!phone || !password) {
             setError(t.login_err_empty);
             return;
@@ -35,7 +33,6 @@ const LoginPage: React.FC<Props> = ({ onSuccess, onBack, language }) => {
 
         setLoading(true);
         try {
-            // 仅保留数字，具体的 +1 补齐逻辑已移至 API 层，确保注册和登录完全一致
             const cleanPhone = phone.replace(/\D/g, '');
 
             if (isRegister) {

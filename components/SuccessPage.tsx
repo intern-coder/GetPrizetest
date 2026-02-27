@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { translations } from '../translations';
 
@@ -50,7 +49,7 @@ const SuccessPage: React.FC<Props> = ({ onReset, onViewOrders, language }) => {
       <footer className="py-8 text-center">
         <div className="flex items-center justify-center gap-2 text-primary opacity-60">
           <span className="material-icons text-sm">verified</span>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Rooted Quality Guaranteed</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em]">DOBEL Quality Guaranteed</span>
         </div>
       </footer>
     </div>

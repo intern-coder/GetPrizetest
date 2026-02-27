@@ -165,25 +165,40 @@ export const fetchUserProfile = async () => {
             .limit(1)
             .maybeSingle();
 
+        const { data: latestFeedback } = await supabase
+            .from('feedbacks')
+            .select('*')
+            .eq('user', phone)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+
         if (!latestOrder) {
             return {
                 shippingInfo: null,
                 prize: null,
                 hasSpun: false,
+                rating: latestFeedback?.rating || 0,
+                feedback: latestFeedback?.comment || '',
             };
         }
 
         return {
             shippingInfo: {
                 name: latestOrder.full_name || '',
+                initials: latestOrder.initials || '',
+                location: latestOrder.location || '',
                 phone: latestOrder.phone || '',
                 province: latestOrder.state || '',
                 city: latestOrder.city || '',
                 address: latestOrder.address1 || '',
+                address2: latestOrder.address2 || '',
                 zipCode: latestOrder.zip || ''
             },
             prize: latestOrder.prize,
             hasSpun: true,
+            rating: latestFeedback?.rating || 0,
+            feedback: latestFeedback?.comment || '',
         };
     } catch (error) {
         console.error('获取个人资料失败:', error);

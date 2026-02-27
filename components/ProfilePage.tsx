@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { UserState, Step } from '../types';
 import { logout } from '../api';
@@ -95,6 +94,12 @@ const ProfilePage: React.FC<Props> = ({ userState, onBack, onNavigate, language 
           >
             {t.profile_logout}
           </button>
+
+          <div className="pt-10 pb-4 text-center">
+            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">
+              DOBEL Quality Guaranteed
+            </p>
+          </div>
         </div>
       </main>
 

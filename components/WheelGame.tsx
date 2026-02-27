@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Step } from '../types';
 import { translations } from '../translations';
@@ -32,7 +31,6 @@ const WheelGame: React.FC<Props> = ({ onWin, onNext, onNavigate, currentStep, la
     setSpinning(true);
 
     const extraTurns = 5;
-    // 恢复旧版的逻辑：随机旋转但在回调中给固定奖品（或者按视觉逻辑给）
     const randomAngle = Math.floor(Math.random() * 360);
     const newRotation = rotation + extraTurns * 360 + randomAngle;
 
@@ -40,8 +38,7 @@ const WheelGame: React.FC<Props> = ({ onWin, onNext, onNavigate, currentStep, la
 
     setTimeout(() => {
       setSpinning(false);
-      // 保持之前的 1个月量装体验包 奖品
-      onWin(language === 'zh' ? '1个月量装体验包' : '1 Month Supply Pack');
+      onWin(language === 'zh' ? 'NITRIC OXIDE VITAL 体验装' : 'NITRIC OXIDE VITAL Trial Pack');
       setShowPopup(true);
     }, 4000);
   };
@@ -50,10 +47,7 @@ const WheelGame: React.FC<Props> = ({ onWin, onNext, onNavigate, currentStep, la
     <div className="flex flex-col min-h-screen bg-bg-light p-6 pb-24">
       <header className="flex items-center justify-between pt-6 pb-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
-            <span className="material-icons text-lg">electric_bolt</span>
-          </div>
-          <span className="font-black text-xl tracking-tight">BEET<span className="text-primary">BOOST</span></span>
+          <img src="/DOBEL logo.png" alt="DOBEL" className="h-24 w-auto" />
         </div>
         <button className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
           <span className="material-icons">help_outline</span>
@@ -63,7 +57,7 @@ const WheelGame: React.FC<Props> = ({ onWin, onNext, onNavigate, currentStep, la
       <main className="flex flex-col items-center flex-grow py-10">
         <div className="text-center mb-12">
           <h1 className="text-3xl font-black mb-2 leading-tight">
-            {language === 'zh' ? '赢取红甜菜根粉！' : 'Win Beetroot Powder!'}
+            {language === 'zh' ? '赢取 NITRIC OXIDE VITAL！' : 'Win NITRIC OXIDE VITAL!'}
           </h1>
           <p className="text-slate-500 text-sm max-w-[280px] mx-auto">
             {language === 'zh' ? '转动转盘，赢取专属折扣和免费产品。' : 'Spin the wheel to win exclusive discounts and free products.'}
@@ -97,7 +91,14 @@ const WheelGame: React.FC<Props> = ({ onWin, onNext, onNavigate, currentStep, la
 
             {/* Prize Labels */}
             <div className="absolute inset-0 pointer-events-none">
-              {prizes.map((prize, i) => {
+              {[
+                { text: t.game_prize_1, color: 'text-white' },
+                { text: t.game_prize_2, color: 'text-primary' },
+                { text: t.game_prize_3, color: 'text-white' },
+                { text: t.game_prize_4, color: 'text-primary' },
+                { text: t.game_prize_5, color: 'text-white' },
+                { text: t.game_prize_6, color: 'text-primary' },
+              ].map((prize, i) => {
                 const angle = i * 60 + 30;
                 return (
                   <div
@@ -120,8 +121,8 @@ const WheelGame: React.FC<Props> = ({ onWin, onNext, onNavigate, currentStep, la
           <div className="absolute w-20 h-20 bg-white rounded-full shadow-xl z-10 flex items-center justify-center border-4 border-bg-light">
             <img
               alt="Logo"
-              className="w-12 h-12 rounded-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPzo3rHj6Bb-2A2z9p53HmzcX6TuB6w0zIP7_XimskMGdjpfchMBIp7XNT2Z2r-N0otmgBEmzg5f3NM9nNRpfhqf4un2w4XF4GCMJU7FDcBjITBP8Hq9bIeKsoEJlagytWQtz42N594WukQqZS4xMxzqtGP_natEpopr96jZA57k5pt9eQg4LxRjZAQiQqsfPGnwh5nJ8VePJBvsVFsdohCFx2FILpmQeCFsr7JoAFQh4_ewJgzEOctUQCApLqtGyWLmYVNV_ZVdg"
+              className="w-14 h-auto object-contain"
+              src="/DOBEL logo.png"
             />
           </div>
         </div>
@@ -168,7 +169,7 @@ const WheelGame: React.FC<Props> = ({ onWin, onNext, onNavigate, currentStep, la
                 {t.game_won_prize}
               </p>
               <p className="text-xl font-black text-primary lowercase tracking-tight">
-                {language === 'zh' ? '1个月量装体验包' : '1 Month Supply Pack'}
+                {language === 'zh' ? 'NITRIC OXIDE VITAL 体验装' : 'NITRIC OXIDE VITAL Trial Pack'}
               </p>
             </div>
 

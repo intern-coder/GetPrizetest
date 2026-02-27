@@ -1,4 +1,3 @@
-
 export enum Step {
   LANDING = 'LANDING',
   LOGIN = 'LOGIN',
@@ -11,20 +10,29 @@ export enum Step {
   SETTINGS = 'SETTINGS',
 }
 
+export interface ShippingInfo {
+  name: string;
+  initials: string;
+  phone: string;
+  province: string;
+  city: string;
+  address: string;
+  address2?: string;
+  zipCode: string;
+  location: string;
+}
+
 export interface UserState {
   hasSpun: boolean;
-  prize?: string;
   rating: number;
   feedback: string;
-  shippingInfo?: {
-    name: string;
-    initials: string;
-    phone: string;
-    province: string;
-    city: string;
-    address: string;
-    address2?: string;
-    zipCode: string;
-    location: string;
-  };
+  prize?: string;
+  shippingInfo?: ShippingInfo;
+}
+
+export interface Order {
+  id: number;
+  prize: string;
+  order_no: string;
+  created_at: string;
 }

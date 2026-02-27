@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { translations } from '../translations';
 
@@ -51,7 +50,7 @@ const FeedbackForm: React.FC<Props> = ({ onBack, onSubmit, language }) => {
           <img
             alt="Product"
             className="w-full h-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8ot6wVf_fbl-25kbLuktTQIzoO_VrGkLSFHk9ciWkytEBtBJ6sX1wh4GXL9jLrxKpp8xujQvSXi_l5WjOw9AS5BLgIfw5HplVIN74gB9MVNAnhwEomm9VET1nrxhhlUukXGWtCia_jfPAmMk7vHP3P7pcmwWm5sP-EIgAOrNkCdeG3be0UeO5qq-PAE_9v1acj48-01JWdE9lAGwK5duLnkBKGEhAGhwUuYkad1pOrKYcjXKWcOE4XWwir7GAubjpBbtKx7V-N9c"
+            src="/stick_box.jpg"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
         </div>

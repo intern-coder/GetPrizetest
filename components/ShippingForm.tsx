@@ -1,16 +1,16 @@
-
 import React, { useState } from 'react';
 import { translations } from '../translations';
+import { ShippingInfo } from '../types';
 
 interface Props {
   onBack: () => void;
-  onSubmit: (info: any) => void;
+  onSubmit: (info: ShippingInfo) => void;
   language: 'zh' | 'en';
 }
 
 const ShippingForm: React.FC<Props> = ({ onBack, onSubmit, language }) => {
   const t = translations[language];
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ShippingInfo>({
     name: '',
     initials: '',
     phone: '',

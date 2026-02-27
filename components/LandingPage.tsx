@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { translations } from '../translations';
 
@@ -22,8 +21,8 @@ const LandingPage: React.FC<Props> = ({ onStart, language }) => {
           <div className="relative mb-12 group">
             <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 group-hover:bg-primary/30 transition-all duration-700"></div>
             <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8ot6wVf_fbl-25kbLuktTQIzoO_VrGkLSFHk9ciWkytEBtBJ6sX1wh4GXL9jLrxKpp8xujQvSXi_l5WjOw9AS5BLgIfw5HplVIN74gB9MVNAnhwEomm9VET1nrxhhlUukXGWtCia_jfPAmMk7vHP3P7pcmwWm5sP-EIgAOrNkCdeG3be0UeO5qq-PAE_9v1acj48-01JWdE9lAGwK5duLnkBKGEhAGhwUuYkad1pOrKYcjXKWcOE4XWwir7GAubjpBbtKx7V-N9c"
-              alt="Beetroot Powder"
+              src="/stick_box.jpg"
+              alt="NITRIC OXIDE VITAL"
               className="w-full h-auto drop-shadow-2xl translate-y-0 group-hover:-translate-y-4 transition-transform duration-700 ease-out"
             />
           </div>
@@ -31,11 +30,7 @@ const LandingPage: React.FC<Props> = ({ onStart, language }) => {
 
         <div className="text-center space-y-4 mb-20">
           <h1 className="text-5xl font-black text-slate-900 leading-[1.1] tracking-tighter">
-            {language === 'zh' ? (
-              <>专属 <span className="text-primary">豪礼抽奖</span></>
-            ) : (
-              <><span className="text-primary">Exclusive</span> Raffle</>
-            )}
+            {t.landing_title}
           </h1>
           <p className="text-slate-500 font-medium max-w-[280px] mx-auto text-lg leading-relaxed">
             {t.landing_subtitle}

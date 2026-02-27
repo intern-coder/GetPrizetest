@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { UserState, Step, Order } from '../types';
 import { fetchUserOrders } from '../api';
@@ -80,7 +79,7 @@ const OrdersPage: React.FC<Props> = ({ onBack, onNavigate, language }) => {
                   <div className="text-right">
                     <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-tighter mb-1">{t.order_no}</span>
                     <span className="block font-black text-xs text-slate-900 font-mono tracking-tighter">
-                      {order.order_no || `RTD-${Math.random().toString(36).substr(2, 9).toUpperCase()}`}
+                      {order.order_no}
                     </span>
                   </div>
                 </div>

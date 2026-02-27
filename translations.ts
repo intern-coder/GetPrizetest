@@ -1,4 +1,3 @@
-
 export const translations = {
     zh: {
         // 导航
@@ -7,8 +6,8 @@ export const translations = {
         nav_profile: '我的',
 
         // 首页
-        landing_title: '专属豪礼抽奖',
-        landing_subtitle: '参与互动，赢取 ROOTED 系列精选天然补剂。',
+        landing_title: 'NITRIC OXIDE VITAL',
+        landing_subtitle: '参与互动，赢取 DOBEL 系列精选天然补剂。',
         landing_start: '立即参与',
         landing_terms: '点击即表示您同意我们的服务条款和隐私政策',
 
@@ -36,6 +35,12 @@ export const translations = {
         game_won_prize: '您获得了',
         game_claim: '立即领取',
         game_rules: '抽奖规则',
+        game_prize_1: '奖品 #1',
+        game_prize_2: '免费样品',
+        game_prize_3: '奖品 #3',
+        game_prize_4: '1个月量装',
+        game_prize_5: '八折优惠',
+        game_prize_6: '免费配送',
 
         // 反馈
         fb_title: '您的体验',
@@ -84,7 +89,7 @@ export const translations = {
         profile_contact: '联系客服',
         profile_settings: '系统设置',
         profile_logout: '退出登录',
-        profile_verified: 'ROOTED. 用户',
+        profile_verified: 'DOBEL 用户',
 
         // 设置页
         settings_title: '设置',
@@ -105,8 +110,8 @@ export const translations = {
         nav_profile: 'Me',
 
         // Landing
-        landing_title: 'Exclusive Raffle',
-        landing_subtitle: 'Join the activity to win premium natural supplements from ROOTED.',
+        landing_title: 'NITRIC OXIDE VITAL',
+        landing_subtitle: 'Join the activity to win premium natural supplements from DOBEL.',
         landing_start: 'Start Now',
         landing_terms: 'By clicking, you agree to our Terms and Privacy Policy',
 
@@ -134,6 +139,12 @@ export const translations = {
         game_won_prize: 'You won',
         game_claim: 'Claim Now',
         game_rules: 'Rules',
+        game_prize_1: 'Prize #1',
+        game_prize_2: 'Free Sample',
+        game_prize_3: 'Prize #3',
+        game_prize_4: '1 Month Supply',
+        game_prize_5: '20% OFF',
+        game_prize_6: 'Free Shipping',
 
         // Feedback
         fb_title: 'Your Feedback',
@@ -182,7 +193,7 @@ export const translations = {
         profile_contact: 'Support',
         profile_settings: 'Settings',
         profile_logout: 'Logout',
-        profile_verified: 'ROOTED. User',
+        profile_verified: 'DOBEL User',
 
         // Settings
         settings_title: 'Settings',
